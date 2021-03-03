@@ -8,27 +8,51 @@ const ChatFeed = (props) => {
   const chat = chats && chats[activeChat];
 
   //   console.log(chat, userName, messages);
+
+  const renderReadReceipts = (message, isMyMessage) => {
+    return chat.people.map(
+      (person, index) =>
+        person.last_read === message.id && (
+          <div
+            key={index}
+            className="read-receipt"
+            style={{
+              float: isMyMessage ? "right" : "left",
+              backgroundImage: `url(${person?.person?.avatar})`,
+            }}
+          ></div>
+        )
+    );
+  };
+
   const renderMessages = () => {
     const keys = Object.keys(messages);
 
-    return keys.map((key, i) => {
+    return keys.map((key, index) => {
       const message = messages[key];
-      const lastMessageKey = i === 0 ? null : keys[i - 1];
+      const lastMessageKey = index === 0 ? null : keys[index - 1];
       const isMyMessage = userName === message.sender.username;
 
       return (
-        <div key={i} style={{ width: "100%" }}>
+        <div key={index} style={{ width: "100%" }}>
           <div className="message-block">
-            {isMyMessage ? <MyMessage /> : <TheirMessage />}
+            {isMyMessage ? (
+              <MyMessage message={message} />
+            ) : (
+              <TheirMessage
+                lastMessage={messages[lastMessageKey]}
+                message={message}
+              />
+            )}
           </div>
           <div
             className="read-receipts"
             style={{
               marginRight: isMyMessage ? "18px" : "0px",
-              marginLeft: isMyMessage ? "0pz" : "68px",
+              marginLeft: isMyMessage ? "0px" : "68px",
             }}
           >
-            read-receipts
+            {renderReadReceipts(message, isMyMessage)}
           </div>
         </div>
       );
@@ -41,7 +65,7 @@ const ChatFeed = (props) => {
       <div className="chat-title-container">
         <div className="chat-title">{chat?.title}</div>
         <div className="chat-subtitle">
-          {chat.peoople.map((person) => `${person.person.username}`)}
+          {chat.people.map((person) => `${person.person.username}`)}
         </div>
       </div>
       {renderMessages()}
