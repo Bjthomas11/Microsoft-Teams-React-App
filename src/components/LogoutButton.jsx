@@ -29,9 +29,16 @@ const Button = styled.button`
 `;
 
 const LogoutButton = () => {
+  const handleClick = () => {
+    localStorage.setItem("username", "");
+    localStorage.setItem("password", "");
+
+    window.location.reload();
+  };
+
   return (
     <ButtonContainer>
-      <Button>Logout</Button>
+      <Button onClick={handleClick}>Logout</Button>
     </ButtonContainer>
   );
 };
